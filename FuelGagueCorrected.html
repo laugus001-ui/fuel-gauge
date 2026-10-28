@@ -107,8 +107,8 @@ button:hover {
 </div>
 
 <script>
-alert("Protocol: " + window.location.protocol);
-alert("Bluetooth API: " + typeof navigator.bluetooth);
+//alert("Protocol: " + window.location.protocol);
+//alert("Bluetooth API: " + typeof navigator.bluetooth);
 
 const SERVICE_UUID =
     "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
@@ -120,23 +120,18 @@ async function connectBLE()
 {
     try
     {
-        if (!navigator.bluetooth)
-        {
-            throw new Error(
-                "Web Bluetooth not available. Check HTTPS and Bluefy."
-            );
-        }
+        alert("Connect button pressed");
 
         document.getElementById("status").innerText =
             "Requesting BLE Device...";
 
         const device =
             await navigator.bluetooth.requestDevice({
-				AcceptAllDevices: true,
-                optonalServices: [SERVICE_UUID]
+                acceptAllDevices: true,
+                optionalServices: [SERVICE_UUID]
             });
 
-        console.log("Device selected:", device.name);
+        alert("Selected: " + device.name);
 
         document.getElementById("status").innerText =
             "Connecting to " + device.name;
@@ -144,21 +139,21 @@ async function connectBLE()
         const server =
             await device.gatt.connect();
 
-        console.log("GATT connected");
+        alert("GATT Connected");
 
         const service =
             await server.getPrimaryService(
                 SERVICE_UUID
             );
 
-        console.log("Service found");
+        alert("Service Found");
 
         const characteristic =
             await service.getCharacteristic(
                 CHARACTERISTIC_UUID
             );
 
-        console.log("Characteristic found");
+        alert("Characteristic Found");
 
         await characteristic.startNotifications();
 
@@ -169,14 +164,20 @@ async function connectBLE()
 
         document.getElementById("status").innerText =
             "Connected & Streaming";
-
     }
     catch(error)
     {
-        console.error(error);
+        alert(
+            "BLE Error:\n" +
+            JSON.stringify(error) +
+            "\n" +
+            String(error)
+        );
 
         document.getElementById("status").innerText =
-            "Error: " + error.message;
+            "Error: " + String(error);
+
+        console.log(error);
     }
 }
 
